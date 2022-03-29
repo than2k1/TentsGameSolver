@@ -267,22 +267,25 @@ def findUnknown():
                 return (row, col)
     return None
 
-def solve():
-    # printBoard()
-    nonAdjaToTree()
-    # printBoard()
-    run = True
-    while run:
-        run = fillInBoard()
-    # printBoard()
-    next = findUnknown()
-    if next is not None:
-        return solveRec(next[0], next[1])
+def solve(algo = "DFS"):
+    if algo == "DFS":
+        return DFS()
     else:
-        if isGoal():
-            return True
+        # printBoard()
+        nonAdjaToTree()
+        # printBoard()
+        run = True
+        while run:
+            run = fillInBoard()
+        # printBoard()
+        next = findUnknown()
+        if next is not None:
+            return solveRec(next[0], next[1])
         else:
-            return None
+            if isGoal():
+                return True
+            else:
+                return None
 
 def solveRec(x,y):
     data = saveData()
@@ -370,9 +373,12 @@ def markRowCol(row, col):
 import time
 def main():
     readFile(sys.argv[1])
+    algo = None
+    if len(sys.argv) == 3:
+        algo = sys.argv[2]
     printBoard()
     start = time.time()
-    if solve():
+    if solve(algo):
         printBoard()
     print("execution time:"+str(time.time()-start))
 
