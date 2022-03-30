@@ -1,5 +1,6 @@
 
 import copy
+from secrets import choice
 import sys
 
 board = []
@@ -188,11 +189,11 @@ def restorData(metadata):
 def DFS():
     for row in range(len(board)):
         for col in range(len(board[0])):
-            
             if board[row][col] == "?":
                 data = saveData()
                 if isValid(row, col):
                     board[row][col] = "X"
+                    markAdjaToTent(row,col)
                     if isGoal():
                         # replace all ? with grass
                         for row in range(len(board)):
@@ -258,22 +259,68 @@ def fillInBoard():
                     markAdjaToTent(i,col)
                     filled = True
         knowInCol = 0
-    return filled
     
+    for row in range(0, len(board)):
+        for col in range(0, len(board[0])):
+            if board[row][col] == "O":
+                neighbors = findNeighbors(row, col)
+                choice = len(neighbors)
+                unknown = None
+                for neighbor in neighbors:
+                    if board[neighbor[0]][neighbor[1]] != "?":
+                        choice -= 1
+                    elif board[neighbor[0]][neighbor[1]] == "X":
+                        choice = 0
+                        break
+                    else:
+                        unknown = neighbor
+                if choice == 1:
+                    board[unknown[0]][unknown[1]] = "X"
+                    colCount[unknown[1]] += 1
+                    rowCount[unknown[0]] += 1
+                    markAdjaToTent(unknown[0],unknown[1])
+                    filled = True
+
+    return filled
+
+
 def findUnknown():
     unknown = []
     for row in range(0, len(board)):
         for col in range(0, len(board[0])):
             if board[row][col] == "?":
-                score = rowTents[row] - (rowCount[row] + 1) + colTents[col] - (colCount[col] + 1)
+                score = calculateScore(row, col)
                 unknown += [(score,row,col)]
     if len(unknown)>0:
-        unknown.sort(key = cmp, reverse=True)
+        unknown.sort(key = cmp)
         return (unknown[0][1], unknown[0][2])
     
     return None
 
+def calculateScore(x, y):
+    #min conflict
+    if not (isValid(x,y)): return 10000
+    data = saveData()
+    score = 1
+    board[x][y] = "X"
+    markAdjaToTent(x,y)
+    markRowCol(x,y)
+    for row in range(0, len(board)):
+        for col in range(0, len(board[0])):
+            if board[row][col] == "O":
+                neighbors = findNeighbors(row, col)
+                choice = len(neighbors)
+                for neighbor in neighbors:
+                    if board[neighbor[0]][neighbor[1]] != "?":
+                        choice -= 1
 
+                if choice == 0:
+                    score = 10000
+    restorData(data)
+    return score
+                
+                
+    
 
 def cmp(t1):
     return t1[0]
@@ -381,13 +428,32 @@ def markRowCol(row, col):
             if board[r][col] == "?":
                 board[r][col] = "."
 
+    for r in range(0, len(board)):
+        for c in range(0, len(board[0])):
+            if board[r][c] == "O":
+                neighbors = findNeighbors(r, c)
+                choice = len(neighbors)
+                unknown = None
+                for neighbor in neighbors:
+                    if board[neighbor[0]][neighbor[1]] == "." or board[neighbor[0]][neighbor[1]] == "O":
+                        choice -= 1
+                    elif board[neighbor[0]][neighbor[1]] == "X":
+                        choice = 0
+                        break
+                    else:
+                        unknown = neighbor
+                if choice == 1:
+                    board[unknown[0]][unknown[1]] = "X"
+                    colCount[unknown[1]] += 1
+                    rowCount[unknown[0]] += 1
+                    markAdjaToTent(unknown[0],unknown[1])
 import time
 def main():
-    # readFile("10x10.txt")
-    readFile(sys.argv[1])
+    readFile("10x10Hard.txt")
     algo = None
-    if len(sys.argv) == 3:
-        algo = sys.argv[2]
+    # readFile(sys.argv[1])
+    # if len(sys.argv) == 3:
+    #     algo = sys.argv[2]
     printBoard()
     start = time.time()
     if solve(algo):
