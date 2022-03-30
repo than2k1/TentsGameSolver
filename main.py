@@ -318,9 +318,6 @@ def calculateScore(x, y):
                     score = 10000
     restorData(data)
     return score
-                
-                
-    
 
 def cmp(t1):
     return t1[0]
@@ -449,11 +446,11 @@ def markRowCol(row, col):
                     markAdjaToTent(unknown[0],unknown[1])
 import time
 def main():
-    readFile("10x10Hard.txt")
+    # readFile("10x10Hard.txt")
     algo = None
-    # readFile(sys.argv[1])
-    # if len(sys.argv) == 3:
-    #     algo = sys.argv[2]
+    readFile(sys.argv[1])
+    if len(sys.argv) == 3:
+        algo = sys.argv[2]
     printBoard()
     start = time.time()
     if solve(algo):
