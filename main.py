@@ -261,11 +261,22 @@ def fillInBoard():
     return filled
     
 def findUnknown():
+    unknown = []
     for row in range(0, len(board)):
         for col in range(0, len(board[0])):
             if board[row][col] == "?":
-                return (row, col)
+                score = rowTents[row] - (rowCount[row] + 1) + colTents[col] - (colCount[col] + 1)
+                unknown += [(score,row,col)]
+    if len(unknown)>0:
+        unknown.sort(key = cmp, reverse=True)
+        return (unknown[0][1], unknown[0][2])
+    
     return None
+
+
+
+def cmp(t1):
+    return t1[0]
 
 def solve(algo = "DFS"):
     if algo == "DFS":
@@ -372,6 +383,7 @@ def markRowCol(row, col):
 
 import time
 def main():
+    # readFile("10x10.txt")
     readFile(sys.argv[1])
     algo = None
     if len(sys.argv) == 3:
