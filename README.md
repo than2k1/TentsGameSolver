@@ -5,13 +5,13 @@ The file main.py contain 2 algorithms: **DFS** and **CSP**
 
 To run DFS, type:
 
-  >**python main.py <testfile> DFS**
+  >**python main.py <testfile\> DFS**
   
   >Example: **python main.py 6x6.txt DFS**
   
 To run CSP, type:
   
-  >**python main.py <testfile>**
+  >**python main.py <testfile\>**
   
   >Example: **python main.py 6x6.txt**
   
