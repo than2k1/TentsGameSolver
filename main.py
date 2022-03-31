@@ -267,7 +267,7 @@ def fillInBoard():
                 choice = len(neighbors)
                 unknown = None
                 for neighbor in neighbors:
-                    if board[neighbor[0]][neighbor[1]] != "?":
+                    if board[neighbor[0]][neighbor[1]] == "O" or board[neighbor[0]][neighbor[1]] == ".":
                         choice -= 1
                     elif board[neighbor[0]][neighbor[1]] == "X":
                         choice = 0
